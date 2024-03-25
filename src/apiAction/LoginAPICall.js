@@ -1,7 +1,7 @@
 import axios from 'axios';
 import UpCase from '../components/formComponents/fields/UpCase';
 
-function LoginAPICall(loginObj) {
+function LoginAPICall(loginObj, setUser) {
   let baseURL = process.env.REACT_APP_LOGIN_URL + '/Stage/V1/login';
   const subDomain = UpCase(loginObj.subdomain);
 
@@ -19,14 +19,15 @@ function LoginAPICall(loginObj) {
         .then((response) => {
           if (response) {
             /* console.log('Success ', response.data); */
+            setUser(response.data);
             resolve(response.data);
           } else {
             if (response.message) {
-              console.log('Failed ', response.message);
+              console.log('Login Failed due to ', response.message);
               reject(response.message);
             } else {
-              console.log('Failed');
-              reject('Failed');
+              console.log('Login Failed due to unforeseen errors');
+              reject('Login Failed due to unforeseen errors');
             }
           }
         })

@@ -8,6 +8,7 @@ import LoginPageBankName from '../components/ui/LoginPageBankName';
 import LoginValidations from '../components/actions/loginValidations/LoginValidations';
 import { useState } from 'react';
 import LoginAPICall from '../apiAction/LoginAPICall';
+import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../components/ui/Loading';
 import FailurePopup from './FailurePopup';
@@ -16,21 +17,21 @@ function LoginPage() {
   let formObject = {};
   let [isError, setIsError] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useUser();
 
   const navigate = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault();
 
-    setIsLoading(true);
-
     formObject = Object.fromEntries(new FormData(e.target));
 
     if (Object.keys(formObject).length > 0) {
       let loginVal = LoginValidations(formObject);
       if (loginVal) {
+        setIsLoading(true);
         try {
-          let loginResp = await LoginAPICall(formObject);
+          let loginResp = await LoginAPICall(formObject, setUser);
           if (Object.keys(loginResp).length > 0) {
             setIsError(false);
             navigate('/dashboard');
