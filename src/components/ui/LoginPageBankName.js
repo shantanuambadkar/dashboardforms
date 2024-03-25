@@ -14,7 +14,7 @@ function LoginPageBankName() {
       </Grid>
       <Grid item xs={3}>
         <img
-          className="inbankLogo"
+          className="smartformsLogo"
           src={SmartFormsLogo}
           alt="InBank Blue Logo"
         />

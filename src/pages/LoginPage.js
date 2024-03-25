@@ -12,6 +12,7 @@ import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../components/ui/Loading';
 import FailurePopup from './FailurePopup';
+import PoweredByFooter from '../components/ui/PoweredByFooter';
 
 function LoginPage() {
   let formObject = {};
@@ -117,6 +118,9 @@ function LoginPage() {
           </Grid>
         </form>
       )}
+      <Grid container>
+        <PoweredByFooter />
+      </Grid>
     </Grid>
   );
 }
