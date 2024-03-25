@@ -5,6 +5,14 @@
   justify-content: center;
 }
 
+.flex-box-form-header-dashboard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 5vh;
+}
+
 .formNotesBelow {
   padding-left: 2vh;
   padding-right: 2vh;

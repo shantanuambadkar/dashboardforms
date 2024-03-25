@@ -1,6 +1,6 @@
 import '../css/Common.css';
 import '../css/Forms.css';
-import Header from '../components/ui/Header';
+import DashboardHeader from '../components/ui/DashboardHeader';
 import { useUser } from '../context/UserContext';
 
 function Dashboard() {
@@ -8,16 +8,26 @@ function Dashboard() {
   console.log('user,', user);
   return (
     <div>
-      <Header />
-      <div id="formHeaderDiv" className="divMargin">
-        <div className="flex-box-form-header">
-          {/* <BackToDashboardButton /> */}
-          <div className="blue-color-text">
-            <h1>Dashboard</h1>
+      {user ? (
+        <div>
+          <DashboardHeader />
+          <div id="formHeaderDiv" className="dashboardDivMargin">
+            <div className="flex-box-form-header-dashboard">
+              <span>Dashboard content</span>
+              <div></div>
+            </div>
           </div>
-          <div></div>
         </div>
-      </div>
+      ) : (
+        <div className="flex-box-form-header">
+          <span className="danger-text">
+            <h3>
+              There were issues getting the user data. Please try again or
+              contact Admin. <a href="/">Click here</a> to go back.
+            </h3>
+          </span>
+        </div>
+      )}
     </div>
   );
 }

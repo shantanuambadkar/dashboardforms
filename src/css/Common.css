@@ -16,6 +16,12 @@ input[type='email'] {
   margin-bottom: 2vh;
 }
 
+.dashboardDivMargin {
+  position: relative;
+  top: 12vh;
+  margin-bottom: 2vh;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
