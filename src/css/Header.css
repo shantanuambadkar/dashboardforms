@@ -1,0 +1,21 @@
+.App-header {
+  height: 8vh;
+  background: linear-gradient(
+    -139deg,
+    rgb(61, 52, 139) 10%,
+    rgb(118, 120, 237) 100%
+  );
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.header-white-font {
+  font-size: calc(20px + 2vmin);
+  color: white;
+}

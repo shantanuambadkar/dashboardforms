@@ -1,0 +1,18 @@
+.checkbox-font {
+  font-size: 15px;
+}
+.checkbox-custom {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+  margin-left: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 2px solid #ccc;
+}
+
+.checkbox-custom:checked {
+  background-color: #032a53 !important;
+  border-color: #032a53 !important;
+}

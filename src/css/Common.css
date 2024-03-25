@@ -1,0 +1,90 @@
+body {
+  color: #6e6e73 !important;
+  font-family: 'Nunito' !important;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+input[type='text'],
+input[type='email'] {
+  text-transform: uppercase;
+}
+
+.divMargin {
+  position: relative;
+  top: 7vh;
+  margin-bottom: 2vh;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.blue-color-text {
+  color: rgb(61, 52, 139);
+}
+
+.top-margin-after-header {
+  margin-top: 10vh;
+}
+.top-margin-generic {
+  margin-top: 5vh;
+}
+
+.left-margin-generic {
+  margin-left: 5vh;
+}
+
+.center-flex-div {
+  display: flex;
+  justify-content: center;
+}
+
+.danger-text {
+  color: red;
+}
+
+.center-align-text {
+  text-align: center;
+}
+.no-margin-top-and-bottom {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.white-text {
+  color: white;
+}
+
+.full-width-div {
+  width: 100% !important;
+}
+
+.white-color-background {
+  background-color: white;
+}
+
+.flex-center-heading {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.MuiInputBase-input {
+  font-family: 'Nunito' !important;
+}
+
+.MuiFormLabel-root {
+  font-family: 'Nunito' !important;
+}
+
+.header-like-index {
+  z-index: 99;
+}
+
+@media (max-width: 1024px) {
+  .center-flex-div {
+    flex-direction: column;
+    align-items: center;
+  }
+}

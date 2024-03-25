@@ -1,0 +1,20 @@
+.textFieldFormTop {
+  margin-top: 2vh !important;
+}
+
+.MuiInputLabel-formControl {
+  top: unset !important;
+  left: unset !important;
+}
+
+.field-width {
+  width: 90%;
+}
+
+.hide-me {
+  display: none;
+}
+
+.text-error {
+  border-bottom: 2px solid red !important;
+}
