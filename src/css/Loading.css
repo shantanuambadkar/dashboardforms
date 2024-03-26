@@ -17,7 +17,7 @@
   animation: l24 1s infinite alternate linear;
 }
 .loader::before {
-  content: 'Authentication in progress...';
+  /* content: 'Authentication in progress...'; */
   line-height: 1em;
   color: #6e6e73;
   background: inherit;

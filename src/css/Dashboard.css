@@ -2,4 +2,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: -4%;
+}
+
+.periodDDDiv {
+  width: 20%;
+}
+
+.flex-button-group {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  /* margin-top: -2%; */
+}
+
+.button-group-margin {
+  margin: 1vh !important;
 }

@@ -78,6 +78,10 @@ function Dropdowns(ddName) {
       'OTHER',
     ];
   }
+  //Dashboard
+  if (ddName === 'dbPeriod') {
+    return ['THIS MONTH', 'THIS WEEK', 'THIS QUARTER'];
+  }
 }
 
 export default Dropdowns;

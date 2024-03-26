@@ -13,11 +13,14 @@ import { useNavigate } from 'react-router-dom';
 import Loading from '../components/ui/Loading';
 import FailurePopup from './FailurePopup';
 import PoweredByFooter from '../components/ui/PoweredByFooter';
+import CountAPI from '../apiAction/dashboardAPIs/CountAPI';
 
 function LoginPage() {
   let formObject = {};
   let [isError, setIsError] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
+  const [loaderText, setLoaderText] = useState('');
+
   const { setUser } = useUser();
 
   const navigate = useNavigate();
@@ -30,12 +33,21 @@ function LoginPage() {
     if (Object.keys(formObject).length > 0) {
       let loginVal = LoginValidations(formObject);
       if (loginVal) {
+        setLoaderText('Authentication in Progress...');
         setIsLoading(true);
         try {
           let loginResp = await LoginAPICall(formObject, setUser);
           if (Object.keys(loginResp).length > 0) {
+            console.log('loginResp', loginResp);
             setIsError(false);
-            navigate('/dashboard');
+            if (loginResp.Role === 'HO') {
+              let userName = loginResp.Name;
+              let concatenatedText = 'Hi ' + userName + '. Please wait...';
+              setLoaderText(concatenatedText);
+              /* CountAPI(formName, userRole, userBranch); */
+              CountAPI('', loginResp.Role, '');
+              navigate('/dashboard');
+            }
           }
         } catch (error) {
           setIsError(true);
@@ -59,7 +71,7 @@ function LoginPage() {
         <LoginPageBankName />
       </Grid>
       {isLoading ? (
-        <Loading />
+        <Loading loaderText={loaderText} />
       ) : (
         <form id="inbankLogin" onSubmit={handleLogin}>
           <Grid container className="grid-container-display">
