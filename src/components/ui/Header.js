@@ -20,7 +20,7 @@ function Header() {
         className="header-white-font cursor-pointer"
         onClick={goToDashboard}
       >
-        The ABC Co-Operative Bank
+        InBank
       </span>
       <div className="logout-div">
         <span className="logout-font cursor-pointer" onClick={handleLogout}>

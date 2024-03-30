@@ -6,22 +6,24 @@ import Buttons from '../components/ui/Buttons';
 import ForgotPassword from '../components/ui/ForgotPassword';
 import LoginPageBankName from '../components/ui/LoginPageBankName';
 import LoginValidations from '../components/actions/loginValidations/LoginValidations';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LoginAPICall from '../apiAction/LoginAPICall';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../components/ui/Loading';
 import FailurePopup from './FailurePopup';
 import PoweredByFooter from '../components/ui/PoweredByFooter';
-import CountAPI from '../apiAction/dashboardAPIs/CountAPI';
+import CallCountAPI from '../components/actions/dashboardCallAllAPIs/CallCountAPI';
+import GetDateFromPeriod from '../components/formComponents/reusableComponents/GetDateFromPeriod';
 
 function LoginPage() {
   let formObject = {};
   let [isError, setIsError] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
   const [loaderText, setLoaderText] = useState('');
+  let [initObjectToCallCountAPI, setInitObjectToCallCountAPI] = useState({});
 
-  const { setUser } = useUser();
+  const { setUser, setCounts } = useUser();
 
   const navigate = useNavigate();
 
@@ -38,16 +40,17 @@ function LoginPage() {
         try {
           let loginResp = await LoginAPICall(formObject, setUser);
           if (Object.keys(loginResp).length > 0) {
-            console.log('loginResp', loginResp);
+            /* console.log('loginResp', loginResp); */
             setIsError(false);
-            if (loginResp.Role === 'HO') {
-              let userName = loginResp.Name;
-              let concatenatedText = 'Hi ' + userName + '. Please wait...';
-              setLoaderText(concatenatedText);
-              /* CountAPI(formName, userRole, userBranch); */
-              CountAPI('', loginResp.Role, '');
-              navigate('/dashboard');
-            }
+            setLoaderText('Please wait...');
+            setInitObjectToCallCountAPI({
+              subdomain: loginResp.BankShortName,
+              formName: 'savings',
+              userRole: loginResp.Role,
+              userBranch: loginResp.Branch,
+              userEmail: loginResp.Email,
+              formattedDate: GetDateFromPeriod('THIS MONTH'),
+            });
           }
         } catch (error) {
           setIsError(true);
@@ -60,6 +63,26 @@ function LoginPage() {
       }
     }
   }
+
+  // CallCountAPI is called here directly
+  useEffect(() => {
+    async function callCountAPI(initObjectToCallCountAPI) {
+      try {
+        let respfromCountAPI = await CallCountAPI(initObjectToCallCountAPI);
+        setCounts(respfromCountAPI);
+        //console.log('respfromCountAPI', respfromCountAPI);
+        navigate('/dashboard');
+      } catch (e) {
+        setIsError(true);
+        setIsLoading(false);
+        console.error('Error in Count API call:', e);
+      }
+    }
+
+    if (Object.keys(initObjectToCallCountAPI).length > 0) {
+      callCountAPI(initObjectToCallCountAPI);
+    }
+  }, [initObjectToCallCountAPI, navigate, setCounts]);
 
   function handleForgotPassword() {
     FailurePopup('', '', true);

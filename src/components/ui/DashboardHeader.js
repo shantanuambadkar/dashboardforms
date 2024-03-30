@@ -4,6 +4,7 @@ import '../../css/Common.css';
 import '../../css/Header.css';
 import LogoutIcon from '../icons/icons8-login-100.png';
 import { useUser } from '../../context/UserContext';
+import InBank_white from '../icons/inbank_white.png';
 
 function DashboardHeader() {
   const { setUser } = useUser();
@@ -20,12 +21,20 @@ function DashboardHeader() {
   return (
     <div>
       <div className="DB-App-header">
-        <span
-          className="header-white-font cursor-pointer"
-          onClick={goToDashboard}
-        >
-          The ABC Co-Operative Bank
-        </span>
+        <div className="DB-Header-Name-Logo">
+          <img
+            src={InBank_white}
+            alt="InBank White"
+            className="white-logo-header leftMargin cursor-pointer"
+            onClick={goToDashboard}
+          />
+          <span
+            className="header-white-font cursor-pointer leftMargin"
+            onClick={goToDashboard}
+          >
+            InBank
+          </span>
+        </div>
         <div className="logout-div">
           <span className="cursor-pointer" onClick={handleLogout}>
             <h3>Logout</h3>

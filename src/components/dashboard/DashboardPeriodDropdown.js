@@ -4,16 +4,14 @@ import UpCase from '../formComponents/fields/UpCase';
 import '../../css/Common.css';
 import '../../css/Fields.css';
 import Dropdowns from '../formComponents/reusableComponents/Dropdowns';
-/* import ReturnPeriod from './ReturnPeriod'; */
 
-function DashboardPeriodDropdown({ classToBeApplied }) {
+function DashboardPeriodDropdown({ classToBeApplied, setDate }) {
   const periodDDVal = Dropdowns('dbPeriod');
   const [selectedPeriod, setSelectedPeriod] = useState('THIS MONTH');
 
   function handlePeriodChange(e) {
     setSelectedPeriod(UpCase(e.target.value));
-    /* let dateOfAPI = await ReturnPeriod(UpCase(e.target.value));
-    console.log('dateOfAPI', dateOfAPI); */
+    setDate(UpCase(e.target.value));
   }
 
   return (

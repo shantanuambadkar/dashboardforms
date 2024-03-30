@@ -1,13 +1,38 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import '../../css/Dashboard.css';
+import CountAPI from '../../apiAction/dashboardAPIs/CountAPI';
+import GetDateFromPeriod from '../formComponents/reusableComponents/GetDateFromPeriod';
 
-const FormButtons = () => {
-  const [activeButton, setActiveButton] = useState('savings');
+const FormButtons = ({
+  subdomain,
+  formName,
+  userRole,
+  userBranch,
+  userEmail,
+  isDate,
+  formButtonClicked,
+}) => {
+  const [activeButton, setActiveButton] = useState(formName);
+  let getCurrentDate;
 
-  const handleButtonClick = (value) => {
-    setActiveButton(value);
-  };
+  if (isDate) {
+    getCurrentDate = GetDateFromPeriod(isDate);
+  }
+
+  async function handleButtonClick(e) {
+    setActiveButton(e);
+    formButtonClicked(e);
+    let allFormCount = await CountAPI(
+      subdomain,
+      e,
+      userRole,
+      userBranch,
+      userEmail,
+      getCurrentDate
+    );
+    console.log('allFormCount in FormButtons.js', allFormCount);
+  }
 
   return (
     <div className="flex-button-group">

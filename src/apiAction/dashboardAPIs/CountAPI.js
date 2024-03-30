@@ -1,8 +1,23 @@
-/* import axios from 'axios'; */
+import axios from 'axios';
+import ConvertDateFormat from '../../components/formComponents/reusableComponents/ConvertDateFormat';
+import FailurePopup from '../../pages/FailurePopup';
 
-function CountAPI(formName, userRole, userBranch, responseCount) {
+function CountAPI(
+  subdomain,
+  formName,
+  userRole,
+  userBranch,
+  userEmail,
+  formattedDate,
+  countOf
+) {
   let branch = '';
   let apiFormName = '';
+
+  let getCurrentDate = ConvertDateFormat(new Date());
+  if (formattedDate) {
+    getCurrentDate = ConvertDateFormat(new Date(formattedDate));
+  }
 
   if (userRole === 'HO') {
     branch = 'all';
@@ -11,55 +26,84 @@ function CountAPI(formName, userRole, userBranch, responseCount) {
   }
 
   if (!formName || formName === '') {
-    apiFormName = 'savings';
+    apiFormName = 'savings_bank';
   } else {
-    apiFormName = formName;
+    if (formName === 'savings') {
+      apiFormName = 'savings_bank';
+    } else {
+      if (formName === 'current') {
+        apiFormName = 'current_account';
+      } else {
+        if (formName === 'fd') {
+          apiFormName = 'fixed_deposit';
+        }
+        if (formName === 'pmjjby') {
+          apiFormName = 'pmsjjy';
+        } else {
+          apiFormName = formName;
+        }
+      }
+    }
   }
 
-  let baseURL =
+  const baseURL =
     process.env.REACT_APP_LOGIN_URL +
     '/Stage/V1/' +
     apiFormName +
     '/count/' +
-    branch +
-    '/26-03-2024';
+    countOf +
+    '/' +
+    getCurrentDate;
 
-  console.log('baseURL', baseURL);
+  let headerOperation = '';
 
-  /* const subDomain = UpCase(loginObj.subdomain);
+  if (countOf) {
+    if (countOf === 'all') {
+      headerOperation = 'countAllByDate';
+    }
+    if (countOf === 'open') {
+      headerOperation = 'countAllOpenByDate';
+    }
+    if (countOf === 'accepted') {
+      headerOperation = 'countAllAcceptedByDate';
+    }
+    if (countOf === 'rejected') {
+      headerOperation = 'countAllRejectedByDate';
+    }
+  }
 
   const headerTag = {
-    subdomain: subDomain,
-    operation: 'login',
-  }; */
+    subdomain: subdomain,
+    operation: headerOperation,
+    user: userEmail,
+  };
 
-  /*   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      axios
-        .post(baseURL, JSON.stringify(loginObj), {
-          headers: headerTag,
-        })
-        .then((response) => {
-          if (response) {
-            console.log('Success ', response.data);
-            setUser(response.data);
-            resolve(response.data);
+  return new Promise((resolve, reject) => {
+    axios
+      .get(baseURL, {
+        headers: headerTag,
+      })
+      .then((response) => {
+        if (response) {
+          resolve(response.data.count);
+        } else {
+          if (response && response.data) {
+            FailurePopup(formName, response.data.message);
+            reject(response.data);
           } else {
-            if (response.message) {
-              console.log('Login Failed due to ', response.message);
-              reject(response.message);
-            } else {
-              console.log('Login Failed due to unforeseen errors');
-              reject('Login Failed due to unforeseen errors');
-            }
+            FailurePopup(
+              formName,
+              'Get Count API failed due to unforeseen errors'
+            );
+            reject('Get Count API failed due to unforeseen errors');
           }
-        })
-        .catch((err) => {
-          console.log(err);
-          reject(err);
-        });
-    }, 1000);
-  }); */
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(err);
+      });
+  });
 }
 
 export default CountAPI;

@@ -10,7 +10,7 @@ function LoginPageBankName() {
         <img className="inbankLogo" src={InBankLogo} alt="InBank Blue Logo" />
       </Grid>
       <Grid item xs={6}>
-        <h1>The ABC Co-Operative Bank</h1>
+        <h1>InBank</h1>
       </Grid>
       <Grid item xs={3}>
         <img

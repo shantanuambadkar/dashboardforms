@@ -7,10 +7,26 @@ import FormCountWidget from '../components/dashboard/FormCountWidget';
 import DashboardPeriodDropdown from '../components/dashboard/DashboardPeriodDropdown';
 import FormButtons from '../components/dashboard/FormButtons';
 import DashboardTable from '../components/dashboard/DashboardTable';
+import { useState } from 'react';
 
 function Dashboard() {
-  const { user } = useUser();
-  /* console.log('user,', user); */
+  const { user, useCounts } = useUser();
+  const [selectedPeriod, setSelectedPeriod] = useState('THIS MONTH');
+  const [formName, setFormName] = useState('savings');
+  const [selectedCountButton, setSelectedCountButton] = useState('open');
+
+  function handlePeriodChange(e) {
+    setSelectedPeriod(e);
+  }
+
+  function handleFormCountButtonClick(e) {
+    setSelectedCountButton(e);
+  }
+
+  function handleFormNameButtonClick(e) {
+    setFormName(e);
+  }
+
   return (
     <div>
       {user ? (
@@ -22,24 +38,38 @@ function Dashboard() {
               <div className="flex-dashboard-count-widget-div">
                 <div className="periodDDDiv">
                   {user.Role === 'HO' ? (
-                    <DashboardPeriodDropdown classToBeApplied="field-width" />
+                    <DashboardPeriodDropdown
+                      classToBeApplied="field-width"
+                      setDate={handlePeriodChange}
+                    />
                   ) : (
                     ''
                   )}
                 </div>
                 <div>
-                  <FormCountWidget />
+                  <FormCountWidget
+                    subdomain={user.BankShortName}
+                    formName={formName}
+                    userBranch={user.Branch}
+                    userEmail={user.Email}
+                    userRole={user.Role}
+                    currCountButtonVal={handleFormCountButtonClick}
+                    dateVal={selectedPeriod}
+                    countVal={useCounts}
+                  />
                 </div>
               </div>
-              <FormButtons />
+              <FormButtons
+                subdomain={user.BankShortName}
+                formName={formName}
+                userRole={user.Role}
+                userBranch={user.Branch}
+                userEmail={user.Email}
+                isDate={selectedPeriod}
+                formButtonClicked={handleFormNameButtonClick}
+              />
               <DashboardTable />
             </div>
-            {/* <div>
-              <FormButtons />
-            </div> */}
-            {/* <div>
-              <DashboardTable />
-            </div> */}
           </div>
         </div>
       ) : (

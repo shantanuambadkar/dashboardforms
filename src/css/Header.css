@@ -44,9 +44,24 @@
   justify-content: flex-end;
   align-items: center;
   width: 65%;
+  margin-right: 2vh;
 }
 
 .logout-icon {
   height: 4vh;
   margin-left: 1vh;
+}
+
+.white-logo-header {
+  width: 30%;
+}
+
+.DB-Header-Name-Logo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.leftMargin {
+  margin-left: 2vh;
 }
