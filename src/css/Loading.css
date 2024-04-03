@@ -6,6 +6,30 @@
   justify-content: center;
   width: 100%;
 }
+.loader {
+  width: fit-content;
+  font-weight: bold;
+  font-family: 'Nunito';
+  font-size: 30px;
+  padding: 0 5px 8px 0;
+  background: repeating-linear-gradient(90deg, currentColor 0 8%, #0000 0 10%)
+    200% 100%/200% 3px no-repeat;
+  animation: l3 2s steps(6) infinite;
+}
+
+@keyframes l3 {
+  to {
+    background-position: 80% 100%;
+  }
+}
+
+/* .loader-container {
+  margin-top: 25dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
 
 .loader {
   width: fit-content;
@@ -17,7 +41,6 @@
   animation: l24 1s infinite alternate linear;
 }
 .loader::before {
-  /* content: 'Authentication in progress...'; */
   line-height: 1em;
   color: #6e6e73;
   background: inherit;
@@ -30,4 +53,4 @@
   100% {
     background-position: left;
   }
-}
+} */

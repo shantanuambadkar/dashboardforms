@@ -1,39 +1,16 @@
 import axios from 'axios';
-//import ConvertDateFormat from '../../components/formComponents/reusableComponents/ConvertDateFormat';
 import FailurePopup from '../../pages/FailurePopup';
 
 function CallGridAPI(gridInputParams, setDBList) {
-  let formName = '';
-
-  if (gridInputParams.formName) {
-    if (gridInputParams.formName === 'savings') {
-      formName = 'savings_bank';
-    }
-    if (gridInputParams.formName === 'current') {
-      formName = 'current_account';
-    }
-    if (gridInputParams.formName === 'fd') {
-      formName = 'fixed_deposit';
-    }
-    if (gridInputParams.formName === 'pmjjby') {
-      formName = 'pmsjjy';
-    }
-    if (gridInputParams.formName === 'pmsby') {
-      formName = 'pmsby';
-    }
-    if (gridInputParams.formName === 'fastag') {
-      formName = 'fastag';
-    }
-  } else {
-    formName = 'savings_bank';
-  }
+  let branch =
+    gridInputParams.userBranch === 'HO' ? 'all' : gridInputParams.userBranch;
 
   const baseURL =
     process.env.REACT_APP_LOGIN_URL +
     '/Stage/V1/' +
-    formName +
+    gridInputParams.formName +
     '/' +
-    gridInputParams.userBranch +
+    branch +
     '/' +
     gridInputParams.fromDate +
     '/' +
@@ -65,14 +42,14 @@ function CallGridAPI(gridInputParams, setDBList) {
           resolve(response.data);
         } else {
           if (response && response.data) {
-            FailurePopup('DashboardGrid', response.data.message);
+            FailurePopup('Grid API', response.data.message);
             reject(response.data);
           } else {
             FailurePopup(
-              'DashboardGrid',
+              'Grid API',
               'Grid API failed due to unforeseen errors'
             );
-            reject('Grid API failed due to unforeseen errors');
+            reject('CallGridAPI failed due to unforeseen errors');
           }
         }
       })

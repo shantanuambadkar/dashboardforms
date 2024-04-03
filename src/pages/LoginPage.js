@@ -14,18 +14,19 @@ import Loading from '../components/ui/Loading';
 import FailurePopup from './FailurePopup';
 import PoweredByFooter from '../components/ui/PoweredByFooter';
 import CallCountAPI from '../components/actions/dashboardCallAllAPIs/CallCountAPI';
-/* import GetDateFromPeriod from '../components/formComponents/reusableComponents/GetDateFromPeriod'; */
+import GetDateFromPeriod from '../components/formComponents/reusableComponents/GetDateFromPeriod';
 import CallGridAPI from '../apiAction/dashboardAPIs/CallGridAPI';
 
 function LoginPage() {
+  const { setUser, setCounts, setDBList, formName } = useUser();
   let formObject = {};
+
   let [isError, setIsError] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
   const [loaderText, setLoaderText] = useState('');
-  let countObjToBePassed = {};
-  let gridObjToBePassed = {};
 
-  const { setUser, setCounts, setDBList } = useUser();
+  const pageNo = 0;
+  let countObjToBePassed = {};
 
   const navigate = useNavigate();
 
@@ -47,27 +48,17 @@ function LoginPage() {
             countObjToBePassed = {
               ...countObjToBePassed,
               subdomain: loginResp.BankShortName,
-              formName: 'savings',
+              formName: formName,
               userRole: loginResp.Role,
               userBranch: loginResp.Branch,
               userEmail: loginResp.Email,
-              fromDate: '2022-01-01', //GetDateFromPeriod('THIS MONTH'),
-            };
-
-            gridObjToBePassed = {
-              ...gridObjToBePassed,
-              subdomain: loginResp.BankShortName,
-              formName: 'savings',
-              userBranch: loginResp.Branch === 'HO' ? 'all' : loginResp.Branch,
-              fromDate: '2022-01-01', //GetDateFromPeriod('THIS QUARTER'),
-              pageNo: '0',
-              userRole: loginResp.Role,
-              userEmail: loginResp.Email,
+              fromDate: GetDateFromPeriod('THIS MONTH'),
+              pageNo: pageNo,
             };
             try {
               await Promise.all([
                 callCountAPI(countObjToBePassed),
-                callDBGridAPI(gridObjToBePassed),
+                callDBGridAPI(countObjToBePassed),
               ]);
 
               //Navigate to Dashboard
@@ -75,41 +66,61 @@ function LoginPage() {
             } catch (e) {
               setIsError(true);
               setIsLoading(false);
-              console.log('Error in calling Count & Grid API wrappers', e);
+              FailurePopup(
+                'Login',
+                'Error while connecting to database on Login Page. Please contact admin.'
+              );
+              console.log(
+                'Error in calling Count & Grid API wrappers on Login',
+                e
+              );
             }
           }
         } catch (error) {
           setIsError(true);
           setIsLoading(false);
-          console.error('Error in API call:', error);
+          FailurePopup(
+            'Login',
+            'Error while logging in due to Login API failure. Please contact admin.'
+          );
+          console.error('Error in Login API call:', error);
         }
       } else {
         setIsError(true);
         setIsLoading(false);
+        FailurePopup(
+          'Login',
+          'Error while logging in due to Login validations. Please contact admin.'
+        );
       }
     }
   }
 
   async function callCountAPI(initObjectToCallCountAPI) {
     try {
-      //Call count API here
-      /* console.log('initObjectToCallCountAPI', initObjectToCallCountAPI); */
       await CallCountAPI(initObjectToCallCountAPI, setCounts);
     } catch (e) {
       setIsError(true);
       setIsLoading(false);
-      console.error('Error in Count API call:', e);
+      FailurePopup(
+        'Login',
+        'Error in calling Count API on Login Page. Please contact admin.'
+      );
+      console.error('Error in calling Count API on Login Page:', e);
     }
   }
 
   async function callDBGridAPI(initObjectToCallGridAPI) {
     try {
-      //Call count API here
       await CallGridAPI(initObjectToCallGridAPI, setDBList);
     } catch (e) {
       setIsError(true);
       setIsLoading(false);
-      console.error('Error in Grid API call:', e);
+      FailurePopup(
+        'Login',
+        'Error in calling Grid API on Login Page. Please contact admin.'
+      );
+      console.error('Error in calling Grid API on Login Page:', e);
     }
   }
 

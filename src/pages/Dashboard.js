@@ -7,25 +7,11 @@ import FormCountWidget from '../components/dashboard/FormCountWidget';
 import DashboardPeriodDropdown from '../components/dashboard/DashboardPeriodDropdown';
 import FormButtons from '../components/dashboard/FormButtons';
 import DashboardTable from '../components/dashboard/DashboardTable';
-import { useState } from 'react';
+import GetDateFromPeriod from '../components/formComponents/reusableComponents/GetDateFromPeriod';
+import PassFormNamesInAPI from '../components/formComponents/reusableComponents/PassFormNamesInAPI';
 
 function Dashboard() {
   const { user, useCounts, DBList } = useUser();
-  const [selectedPeriod, setSelectedPeriod] = useState('THIS MONTH');
-  const [formName, setFormName] = useState('savings');
-  const [selectedCountButton, setSelectedCountButton] = useState('open');
-
-  function handlePeriodChange(e) {
-    setSelectedPeriod(e);
-  }
-
-  function handleFormCountButtonClick(e) {
-    setSelectedCountButton(e);
-  }
-
-  function handleFormNameButtonClick(e) {
-    setFormName(e);
-  }
 
   return (
     <div>
@@ -37,29 +23,18 @@ function Dashboard() {
               <h3>Welcome {user.Name}</h3>
               <div className="flex-dashboard-count-widget-div">
                 <div className="periodDDDiv">
+                  <DashboardPeriodDropdown classToBeApplied="field-width" />
                   {user.Role === 'HO' ? (
-                    <DashboardPeriodDropdown
-                      classToBeApplied="field-width"
-                      setDate={handlePeriodChange}
-                    />
+                    <DashboardPeriodDropdown classToBeApplied="field-width" />
                   ) : (
                     ''
                   )}
                 </div>
                 <div>
-                  <FormCountWidget
-                    subdomain={user.BankShortName}
-                    formName={formName}
-                    userBranch={user.Branch}
-                    userEmail={user.Email}
-                    userRole={user.Role}
-                    currCountButtonVal={handleFormCountButtonClick}
-                    dateVal={selectedPeriod}
-                    countVal={useCounts}
-                  />
+                  <FormCountWidget />
                 </div>
               </div>
-              <FormButtons
+              {/* <FormButtons
                 subdomain={user.BankShortName}
                 formName={formName}
                 userRole={user.Role}
@@ -68,7 +43,7 @@ function Dashboard() {
                 isDate={selectedPeriod}
                 formButtonClicked={handleFormNameButtonClick}
               />
-              <DashboardTable />
+              <DashboardTable /> */}
             </div>
           </div>
         </div>

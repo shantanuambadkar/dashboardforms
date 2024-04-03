@@ -5,84 +5,54 @@ import Pending from '../../components/icons/icons8-sand-watch-64.png';
 import Approved from '../../components/icons/icons8-done-64.png';
 import Rejected from '../../components/icons/icons8-rejected-64.png';
 import { useState } from 'react';
-import CountAPI from '../../apiAction/dashboardAPIs/CountAPI';
-import GetDateFromPeriod from '../formComponents/reusableComponents/GetDateFromPeriod';
+import CallCountAPI from '../actions/dashboardCallAllAPIs/CallCountAPI';
+import { useUser } from '../../context/UserContext';
+import CallGridAPI from '../../apiAction/dashboardAPIs/CallGridAPI';
+import FailurePopup from '../../pages/FailurePopup';
 
-function FormCountWidget({
-  subdomain,
-  formName,
-  userRole,
-  userBranch,
-  userEmail,
-  currCountButtonVal,
-  dateVal,
-  countVal,
-}) {
-  /* console.log('countVal', countVal); */
-  const [openFormCount, setOpenFormCount] = useState(countVal.openCnt);
-  const [approvedFormCount, setApprovedFormCount] = useState(
-    countVal.approvedCnt
-  );
-  const [rejectedFormCount, setRejectedFormCount] = useState(
-    countVal.rejectedCnt
-  );
-  const [totalFormCount, setTotalFormCount] = useState(countVal.totalCnt);
+function FormCountWidget() {
+  //console.log('dateVal', dateVal);
+  const {
+    user,
+    useCounts,
+    setCounts,
+    setDBList,
+    formName,
+    DBPeriod,
+    setDBCountWidgetButton,
+    DBPageNo,
+  } = useUser();
 
   const [activeCountButton, setActiveCountButton] = useState('open');
 
-  let getCurrentDate;
-
-  if (dateVal) {
-    getCurrentDate = GetDateFromPeriod(dateVal);
-  }
+  let countObjToBePassed = {
+    subdomain: user.BankShortName,
+    formName: formName,
+    userRole: user.Role,
+    userBranch: user.Branch,
+    userEmail: user.Email,
+    fromDate: DBPeriod,
+    pageNo: DBPageNo,
+  };
 
   async function handleCountButtonClick(value) {
     setActiveCountButton(value);
-    currCountButtonVal(value);
-    setTotalFormCount(
-      await CountAPI(
-        subdomain,
-        formName,
-        userRole,
-        userBranch,
-        userEmail,
-        getCurrentDate,
-        'all'
-      )
-    );
-    setOpenFormCount(
-      await CountAPI(
-        subdomain,
-        formName,
-        userRole,
-        userBranch,
-        userEmail,
-        getCurrentDate,
-        'open'
-      )
-    );
-    setApprovedFormCount(
-      await CountAPI(
-        subdomain,
-        formName,
-        userRole,
-        userBranch,
-        userEmail,
-        getCurrentDate,
-        'accepted'
-      )
-    );
-    setRejectedFormCount(
-      await CountAPI(
-        subdomain,
-        formName,
-        userRole,
-        userBranch,
-        userEmail,
-        getCurrentDate,
-        'rejected'
-      )
-    );
+    setDBCountWidgetButton(value);
+    try {
+      await Promise.all([
+        CallCountAPI(countObjToBePassed, setCounts),
+        CallGridAPI(countObjToBePassed, setDBList),
+      ]);
+    } catch (e) {
+      FailurePopup(
+        'Dashboard Count Widget',
+        'Error in calling Count & Grid API wrappers on Dashboard Count Widget'
+      );
+      console.log(
+        'Error in calling Count & Grid API wrappers from FormCountWidget',
+        e
+      );
+    }
   }
 
   return (
@@ -98,7 +68,7 @@ function FormCountWidget({
           <div onClick={() => handleCountButtonClick('open')}>
             <div>Open</div>
             <div>
-              <span>{openFormCount}</span>
+              <span>{useCounts.openCnt}</span>
             </div>
             <div>
               <img
@@ -119,7 +89,7 @@ function FormCountWidget({
           <div onClick={() => handleCountButtonClick('accepted')}>
             <div>Accepted</div>
             <div>
-              <span>{approvedFormCount}</span>
+              <span>{useCounts.approvedCnt}</span>
             </div>
             <div>
               <img className="formCountIcons" src={Approved} alt="Green Tick" />
@@ -136,7 +106,7 @@ function FormCountWidget({
           <div onClick={() => handleCountButtonClick('rejected')}>
             <div>Rejected</div>
             <div>
-              <span>{rejectedFormCount}</span>
+              <span>{useCounts.rejectedCnt}</span>
             </div>
             <div>
               <img className="formCountIcons" src={Rejected} alt="Cross" />
@@ -153,7 +123,7 @@ function FormCountWidget({
           <div onClick={() => handleCountButtonClick('total')}>
             <div>Total</div>
             <div>
-              <span>{totalFormCount}</span>
+              <span>{useCounts.totalCnt}</span>
             </div>
           </div>
         </Grid>
