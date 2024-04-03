@@ -1,46 +1,27 @@
 import axios from 'axios';
-import ConvertDateFormat from '../../components/formComponents/reusableComponents/ConvertDateFormat';
 import FailurePopup from '../../pages/FailurePopup';
 
-function CountAPI(
-  subdomain,
-  formName,
-  userRole,
-  userBranch,
-  userEmail,
-  formattedDate,
-  countOf
-) {
-  let branch = '';
+function CountAPI(countObj) {
+  /* console.log('countObj', countObj); */
+
   let apiFormName = '';
 
-  let getCurrentDate = ConvertDateFormat(new Date());
-  if (formattedDate) {
-    getCurrentDate = ConvertDateFormat(new Date(formattedDate));
-  }
-
-  if (userRole === 'HO') {
-    branch = 'all';
-  } else {
-    branch = userBranch;
-  }
-
-  if (!formName || formName === '') {
+  if (!countObj.formName || countObj.formName === '') {
     apiFormName = 'savings_bank';
   } else {
-    if (formName === 'savings') {
+    if (countObj.formName === 'savings') {
       apiFormName = 'savings_bank';
     } else {
-      if (formName === 'current') {
+      if (countObj.formName === 'current') {
         apiFormName = 'current_account';
       } else {
-        if (formName === 'fd') {
+        if (countObj.formName === 'fd') {
           apiFormName = 'fixed_deposit';
         }
-        if (formName === 'pmjjby') {
+        if (countObj.formName === 'pmjjby') {
           apiFormName = 'pmsjjy';
         } else {
-          apiFormName = formName;
+          apiFormName = countObj.formName;
         }
       }
     }
@@ -51,31 +32,31 @@ function CountAPI(
     '/Stage/V1/' +
     apiFormName +
     '/count/' +
-    countOf +
+    countObj.countOf +
     '/' +
-    getCurrentDate;
+    countObj.fromDate;
 
   let headerOperation = '';
 
-  if (countOf) {
-    if (countOf === 'all') {
+  if (countObj.countOf) {
+    if (countObj.countOf === 'all') {
       headerOperation = 'countAllByDate';
     }
-    if (countOf === 'open') {
+    if (countObj.countOf === 'open') {
       headerOperation = 'countAllOpenByDate';
     }
-    if (countOf === 'accepted') {
+    if (countObj.countOf === 'accepted') {
       headerOperation = 'countAllAcceptedByDate';
     }
-    if (countOf === 'rejected') {
+    if (countObj.countOf === 'rejected') {
       headerOperation = 'countAllRejectedByDate';
     }
   }
 
   const headerTag = {
-    subdomain: subdomain,
+    subdomain: countObj.subdomain,
     operation: headerOperation,
-    user: userEmail,
+    user: countObj.userEmail,
   };
 
   return new Promise((resolve, reject) => {
@@ -88,11 +69,11 @@ function CountAPI(
           resolve(response.data.count);
         } else {
           if (response && response.data) {
-            FailurePopup(formName, response.data.message);
+            FailurePopup('DashboardCount', response.data.message);
             reject(response.data);
           } else {
             FailurePopup(
-              formName,
+              'DashboardCount',
               'Get Count API failed due to unforeseen errors'
             );
             reject('Get Count API failed due to unforeseen errors');

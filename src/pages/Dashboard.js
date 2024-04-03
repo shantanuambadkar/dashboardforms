@@ -10,7 +10,7 @@ import DashboardTable from '../components/dashboard/DashboardTable';
 import { useState } from 'react';
 
 function Dashboard() {
-  const { user, useCounts } = useUser();
+  const { user, useCounts, DBList } = useUser();
   const [selectedPeriod, setSelectedPeriod] = useState('THIS MONTH');
   const [formName, setFormName] = useState('savings');
   const [selectedCountButton, setSelectedCountButton] = useState('open');
@@ -29,7 +29,7 @@ function Dashboard() {
 
   return (
     <div>
-      {user ? (
+      {user && useCounts && DBList ? (
         <div>
           <DashboardHeader />
           <div id="formHeaderDiv" className="dashboardDivMargin">

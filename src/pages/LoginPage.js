@@ -6,7 +6,7 @@ import Buttons from '../components/ui/Buttons';
 import ForgotPassword from '../components/ui/ForgotPassword';
 import LoginPageBankName from '../components/ui/LoginPageBankName';
 import LoginValidations from '../components/actions/loginValidations/LoginValidations';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import LoginAPICall from '../apiAction/LoginAPICall';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,16 +14,18 @@ import Loading from '../components/ui/Loading';
 import FailurePopup from './FailurePopup';
 import PoweredByFooter from '../components/ui/PoweredByFooter';
 import CallCountAPI from '../components/actions/dashboardCallAllAPIs/CallCountAPI';
-import GetDateFromPeriod from '../components/formComponents/reusableComponents/GetDateFromPeriod';
+/* import GetDateFromPeriod from '../components/formComponents/reusableComponents/GetDateFromPeriod'; */
+import CallGridAPI from '../apiAction/dashboardAPIs/CallGridAPI';
 
 function LoginPage() {
   let formObject = {};
   let [isError, setIsError] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
   const [loaderText, setLoaderText] = useState('');
-  let [initObjectToCallCountAPI, setInitObjectToCallCountAPI] = useState({});
+  let countObjToBePassed = {};
+  let gridObjToBePassed = {};
 
-  const { setUser, setCounts } = useUser();
+  const { setUser, setCounts, setDBList } = useUser();
 
   const navigate = useNavigate();
 
@@ -40,17 +42,41 @@ function LoginPage() {
         try {
           let loginResp = await LoginAPICall(formObject, setUser);
           if (Object.keys(loginResp).length > 0) {
-            /* console.log('loginResp', loginResp); */
             setIsError(false);
-            setLoaderText('Please wait...');
-            setInitObjectToCallCountAPI({
+            setLoaderText('Please wait. We are loading Dashboard...');
+            countObjToBePassed = {
+              ...countObjToBePassed,
               subdomain: loginResp.BankShortName,
               formName: 'savings',
               userRole: loginResp.Role,
               userBranch: loginResp.Branch,
               userEmail: loginResp.Email,
-              formattedDate: GetDateFromPeriod('THIS MONTH'),
-            });
+              fromDate: '2022-01-01', //GetDateFromPeriod('THIS MONTH'),
+            };
+
+            gridObjToBePassed = {
+              ...gridObjToBePassed,
+              subdomain: loginResp.BankShortName,
+              formName: 'savings',
+              userBranch: loginResp.Branch === 'HO' ? 'all' : loginResp.Branch,
+              fromDate: '2022-01-01', //GetDateFromPeriod('THIS QUARTER'),
+              pageNo: '0',
+              userRole: loginResp.Role,
+              userEmail: loginResp.Email,
+            };
+            try {
+              await Promise.all([
+                callCountAPI(countObjToBePassed),
+                callDBGridAPI(gridObjToBePassed),
+              ]);
+
+              //Navigate to Dashboard
+              navigate('/dashboard');
+            } catch (e) {
+              setIsError(true);
+              setIsLoading(false);
+              console.log('Error in calling Count & Grid API wrappers', e);
+            }
           }
         } catch (error) {
           setIsError(true);
@@ -64,25 +90,28 @@ function LoginPage() {
     }
   }
 
-  // CallCountAPI is called here directly
-  useEffect(() => {
-    async function callCountAPI(initObjectToCallCountAPI) {
-      try {
-        let respfromCountAPI = await CallCountAPI(initObjectToCallCountAPI);
-        setCounts(respfromCountAPI);
-        //console.log('respfromCountAPI', respfromCountAPI);
-        navigate('/dashboard');
-      } catch (e) {
-        setIsError(true);
-        setIsLoading(false);
-        console.error('Error in Count API call:', e);
-      }
+  async function callCountAPI(initObjectToCallCountAPI) {
+    try {
+      //Call count API here
+      /* console.log('initObjectToCallCountAPI', initObjectToCallCountAPI); */
+      await CallCountAPI(initObjectToCallCountAPI, setCounts);
+    } catch (e) {
+      setIsError(true);
+      setIsLoading(false);
+      console.error('Error in Count API call:', e);
     }
+  }
 
-    if (Object.keys(initObjectToCallCountAPI).length > 0) {
-      callCountAPI(initObjectToCallCountAPI);
+  async function callDBGridAPI(initObjectToCallGridAPI) {
+    try {
+      //Call count API here
+      await CallGridAPI(initObjectToCallGridAPI, setDBList);
+    } catch (e) {
+      setIsError(true);
+      setIsLoading(false);
+      console.error('Error in Grid API call:', e);
     }
-  }, [initObjectToCallCountAPI, navigate, setCounts]);
+  }
 
   function handleForgotPassword() {
     FailurePopup('', '', true);
