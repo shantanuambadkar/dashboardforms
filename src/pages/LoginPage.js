@@ -44,7 +44,7 @@ function LoginPage() {
           let loginResp = await LoginAPICall(formObject, setUser);
           if (Object.keys(loginResp).length > 0) {
             setIsError(false);
-            setLoaderText('Please wait. We are loading Dashboard...');
+            setLoaderText('Please wait while we load your Dashboard...');
             countObjToBePassed = {
               ...countObjToBePassed,
               subdomain: loginResp.BankShortName,
