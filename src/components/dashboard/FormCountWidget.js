@@ -21,6 +21,7 @@ function FormCountWidget() {
     DBPeriod,
     setDBCountWidgetButton,
     DBPageNo,
+    DBBranchVal,
   } = useUser();
 
   const [activeCountButton, setActiveCountButton] = useState('open');
@@ -29,7 +30,7 @@ function FormCountWidget() {
     subdomain: user.BankShortName,
     formName: formName,
     userRole: user.Role,
-    userBranch: user.Branch,
+    userBranch: DBBranchVal,
     userEmail: user.Email,
     fromDate: DBPeriod,
     pageNo: DBPageNo,

@@ -34,22 +34,40 @@ function CountAPI(countObj) {
     '/count/' +
     countObj.countOf +
     '/' +
+    (countObj.userBranch !== 'all' ? countObj.userBranch + '/' : '') +
     countObj.fromDate;
 
   let headerOperation = '';
 
-  if (countObj.countOf) {
-    if (countObj.countOf === 'all') {
-      headerOperation = 'countAllByDate';
+  if (countObj.userBranch === 'all') {
+    if (countObj.countOf) {
+      if (countObj.countOf === 'all') {
+        headerOperation = 'countAllByDate';
+      }
+      if (countObj.countOf === 'open') {
+        headerOperation = 'countAllOpenByDate';
+      }
+      if (countObj.countOf === 'accepted') {
+        headerOperation = 'countAllAcceptedByDate';
+      }
+      if (countObj.countOf === 'rejected') {
+        headerOperation = 'countAllRejectedByDate';
+      }
     }
-    if (countObj.countOf === 'open') {
-      headerOperation = 'countAllOpenByDate';
-    }
-    if (countObj.countOf === 'accepted') {
-      headerOperation = 'countAllAcceptedByDate';
-    }
-    if (countObj.countOf === 'rejected') {
-      headerOperation = 'countAllRejectedByDate';
+  } else {
+    if (countObj.countOf) {
+      if (countObj.countOf === 'all') {
+        headerOperation = 'countByBranchDate';
+      }
+      if (countObj.countOf === 'open') {
+        headerOperation = 'countOpenByBranchDate';
+      }
+      if (countObj.countOf === 'accepted') {
+        headerOperation = 'countAcceptedByBranchDate';
+      }
+      if (countObj.countOf === 'rejected') {
+        headerOperation = 'countRejectedByBranchDate';
+      }
     }
   }
 

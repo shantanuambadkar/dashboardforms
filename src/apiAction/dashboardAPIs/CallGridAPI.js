@@ -2,15 +2,12 @@ import axios from 'axios';
 import FailurePopup from '../../pages/FailurePopup';
 
 function CallGridAPI(gridInputParams, setDBList) {
-  let branch =
-    gridInputParams.userBranch === 'HO' ? 'all' : gridInputParams.userBranch;
-
   const baseURL =
     process.env.REACT_APP_LOGIN_URL +
     '/Stage/V1/' +
     gridInputParams.formName +
     '/' +
-    branch +
+    gridInputParams.userBranch +
     '/' +
     gridInputParams.fromDate +
     '/' +
@@ -18,7 +15,7 @@ function CallGridAPI(gridInputParams, setDBList) {
 
   let headerOperation = '';
 
-  if (gridInputParams.userRole === 'HO') {
+  if (gridInputParams.userBranch === 'all') {
     headerOperation = 'fetchAllByDate';
   } else {
     headerOperation = 'fetchBranchByDate';

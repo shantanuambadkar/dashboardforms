@@ -82,6 +82,9 @@ function Dropdowns(ddName) {
   if (ddName === 'dbPeriod') {
     return ['THIS MONTH', 'THIS WEEK', 'THIS QUARTER'];
   }
+  if (ddName === 'dbBranch') {
+    return ['ALL', 'AHMEDNAGAR', 'SAMBHAJI NAGAR', 'MUMBAI'];
+  }
 }
 
 export default Dropdowns;

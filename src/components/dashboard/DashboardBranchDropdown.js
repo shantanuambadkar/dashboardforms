@@ -1,43 +1,45 @@
-import { Grid, Select, MenuItem, InputLabel } from '@material-ui/core';
-import UpCase from '../formComponents/fields/UpCase';
 import '../../css/Common.css';
 import '../../css/Fields.css';
 import Dropdowns from '../formComponents/reusableComponents/Dropdowns';
+import { Grid, Select, MenuItem, InputLabel } from '@material-ui/core';
 import { useUser } from '../../context/UserContext';
+import UpCase from '../formComponents/fields/UpCase';
+import { useState } from 'react';
 import CallCountAPI from '../actions/dashboardCallAllAPIs/CallCountAPI';
 import CallGridAPI from '../../apiAction/dashboardAPIs/CallGridAPI';
 import FailurePopup from '../../pages/FailurePopup';
-import GetDateFromPeriod from '../formComponents/reusableComponents/GetDateFromPeriod';
 
-function DashboardPeriodDropdown({ classToBeApplied /* onValueChange */ }) {
-  const periodDDVal = Dropdowns('dbPeriod');
-
+function DashboardBranchDropdown({ classToBeApplied }) {
+  const branchDD = Dropdowns('dbBranch');
   const {
     user,
-    setCounts,
-    setDBList,
     formName,
     DBPageNo,
-    setDBPeriod,
-    DBPeriodVal,
-    setDBPeriodVal,
     DBBranchVal,
+    setDBBranchVal,
+    DBPeriod,
+    setCounts,
+    setDBList,
   } = useUser();
 
-  async function handlePeriodChange(e) {
-    /* console.log('DB Period Value', UpCase(e.target.value)); */
-    setDBPeriod(GetDateFromPeriod(UpCase(e.target.value)));
-    setDBPeriodVal(UpCase(e.target.value));
+  const [selectedDBBranch, setSelectedDBBranch] = useState(UpCase(DBBranchVal));
+
+  async function handleDBBranchChange(e) {
+    setSelectedDBBranch(UpCase(e.target.value));
+    setDBBranchVal(e.target.value);
+    //Call APIs here
 
     let countObjToBePassed = {
       subdomain: user.BankShortName,
       formName: formName,
       userRole: user.Role,
-      userBranch: DBBranchVal,
+      userBranch: e.target.value,
       userEmail: user.Email,
-      fromDate: GetDateFromPeriod(UpCase(e.target.value)),
+      fromDate: DBPeriod,
       pageNo: DBPageNo,
     };
+
+    /* console.log('countObjToBePassed', countObjToBePassed); */
 
     try {
       await Promise.all([
@@ -46,11 +48,11 @@ function DashboardPeriodDropdown({ classToBeApplied /* onValueChange */ }) {
       ]);
     } catch (e) {
       FailurePopup(
-        'Dashboard Period Dropdown',
-        'Error in calling Count & Grid API wrappers on Dashboard Period Dropdown'
+        'Dashboard Branch Dropdown',
+        'Error in calling Count & Grid API wrappers on Dashboard Branch Dropdown'
       );
       console.log(
-        'Error in calling Count & Grid API wrappers from Dashboard Period Dropdown',
+        'Error in calling Count & Grid API wrappers from Dashboard Branch Dropdown',
         e
       );
     }
@@ -59,20 +61,20 @@ function DashboardPeriodDropdown({ classToBeApplied /* onValueChange */ }) {
   return (
     <Grid container className="textFieldFormTop">
       <Grid item xs={12}>
-        <InputLabel id="periodDropdown" htmlFor="period">
-          Period *
+        <InputLabel id="dbBranchDropdown" htmlFor="dbBranch">
+          Branch *
         </InputLabel>
         <Select
           required
           className={classToBeApplied}
           inputProps={{
-            name: 'period',
-            id: 'period',
+            name: 'dbBranch',
+            id: 'dbBranch',
           }}
-          value={DBPeriodVal}
-          onChange={handlePeriodChange}
+          value={selectedDBBranch}
+          onChange={handleDBBranchChange}
         >
-          {periodDDVal.map((value) => {
+          {branchDD.map((value) => {
             return (
               <MenuItem key={value} value={value}>
                 {value}
@@ -85,4 +87,4 @@ function DashboardPeriodDropdown({ classToBeApplied /* onValueChange */ }) {
   );
 }
 
-export default DashboardPeriodDropdown;
+export default DashboardBranchDropdown;

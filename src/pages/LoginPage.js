@@ -18,7 +18,14 @@ import GetDateFromPeriod from '../components/formComponents/reusableComponents/G
 import CallGridAPI from '../apiAction/dashboardAPIs/CallGridAPI';
 
 function LoginPage() {
-  const { setUser, setCounts, setDBList, formName } = useUser();
+  const {
+    setUser,
+    setCounts,
+    setDBList,
+    formName,
+    setDBBranchVal,
+    DBBranchVal,
+  } = useUser();
   let formObject = {};
 
   let [isError, setIsError] = useState(false);
@@ -45,23 +52,26 @@ function LoginPage() {
           if (Object.keys(loginResp).length > 0) {
             setIsError(false);
             setLoaderText('Please wait while we load your Dashboard...');
+            if (loginResp.Role === 'HO') {
+              setDBBranchVal('all');
+            } else {
+              setDBBranchVal(loginResp.Branch);
+            }
             countObjToBePassed = {
               ...countObjToBePassed,
               subdomain: loginResp.BankShortName,
               formName: formName,
               userRole: loginResp.Role,
-              userBranch: loginResp.Branch,
+              userBranch: DBBranchVal,
               userEmail: loginResp.Email,
               fromDate: GetDateFromPeriod('THIS MONTH'),
               pageNo: pageNo,
             };
             try {
               await Promise.all([
-                callCountAPI(countObjToBePassed),
-                callDBGridAPI(countObjToBePassed),
+                CallCountAPI(countObjToBePassed, setCounts),
+                CallGridAPI(countObjToBePassed, setDBList),
               ]);
-
-              //Navigate to Dashboard
               navigate('/dashboard');
             } catch (e) {
               setIsError(true);
@@ -93,34 +103,6 @@ function LoginPage() {
           'Error while logging in due to Login validations. Please contact admin.'
         );
       }
-    }
-  }
-
-  async function callCountAPI(initObjectToCallCountAPI) {
-    try {
-      await CallCountAPI(initObjectToCallCountAPI, setCounts);
-    } catch (e) {
-      setIsError(true);
-      setIsLoading(false);
-      FailurePopup(
-        'Login',
-        'Error in calling Count API on Login Page. Please contact admin.'
-      );
-      console.error('Error in calling Count API on Login Page:', e);
-    }
-  }
-
-  async function callDBGridAPI(initObjectToCallGridAPI) {
-    try {
-      await CallGridAPI(initObjectToCallGridAPI, setDBList);
-    } catch (e) {
-      setIsError(true);
-      setIsLoading(false);
-      FailurePopup(
-        'Login',
-        'Error in calling Grid API on Login Page. Please contact admin.'
-      );
-      console.error('Error in calling Grid API on Login Page:', e);
     }
   }
 

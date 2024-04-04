@@ -16,6 +16,7 @@ export const UserProvider = ({ children }) => {
   const [DBPeriod, setDBPeriod] = useState(GetDateFromPeriod('THIS MONTH'));
   const [formName, setFormName] = useState(PassFormNamesInAPI(''));
   const [DBPeriodVal, setDBPeriodVal] = useState('THIS MONTH');
+  const [DBBranchVal, setDBBranchVal] = useState('all');
 
   return (
     <UserContext.Provider
@@ -36,6 +37,8 @@ export const UserProvider = ({ children }) => {
         setDBPeriod,
         DBPeriodVal,
         setDBPeriodVal,
+        DBBranchVal,
+        setDBBranchVal,
       }}
     >
       {children}

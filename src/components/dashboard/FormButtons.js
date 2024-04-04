@@ -1,37 +1,56 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import '../../css/Dashboard.css';
-import CountAPI from '../../apiAction/dashboardAPIs/CountAPI';
-import GetDateFromPeriod from '../formComponents/reusableComponents/GetDateFromPeriod';
+import CallCountAPI from '../actions/dashboardCallAllAPIs/CallCountAPI';
+import CallGridAPI from '../../apiAction/dashboardAPIs/CallGridAPI';
+import { useUser } from '../../context/UserContext';
+import PassFormNamesInAPI from '../formComponents/reusableComponents/PassFormNamesInAPI';
+import FailurePopup from '../../pages/FailurePopup';
 
-const FormButtons = ({
-  subdomain,
-  formName,
-  userRole,
-  userBranch,
-  userEmail,
-  isDate,
-  formButtonClicked,
-}) => {
-  const [activeButton, setActiveButton] = useState(formName);
-  let getCurrentDate;
+const FormButtons = () => {
+  const {
+    user,
+    setFormName,
+    DBPeriod,
+    DBPageNo,
+    DBBranchVal,
+    setCounts,
+    setDBList,
+  } = useUser();
 
-  if (isDate) {
-    getCurrentDate = GetDateFromPeriod(isDate);
-  }
+  const [activeButton, setActiveButton] = useState('savings');
 
   async function handleButtonClick(e) {
     setActiveButton(e);
-    formButtonClicked(e);
-    let allFormCount = await CountAPI(
-      subdomain,
-      e,
-      userRole,
-      userBranch,
-      userEmail,
-      getCurrentDate
-    );
-    console.log('allFormCount in FormButtons.js', allFormCount);
+    setFormName(PassFormNamesInAPI(e));
+
+    //Call APIs here
+
+    let countObjToBePassed = {
+      subdomain: user.BankShortName,
+      formName: PassFormNamesInAPI(e),
+      userRole: user.Role,
+      userBranch: DBBranchVal,
+      userEmail: user.Email,
+      fromDate: DBPeriod,
+      pageNo: DBPageNo,
+    };
+
+    try {
+      await Promise.all([
+        CallCountAPI(countObjToBePassed, setCounts),
+        CallGridAPI(countObjToBePassed, setDBList),
+      ]);
+    } catch (e) {
+      FailurePopup(
+        'Dashboard Form Button',
+        'Error in calling Count & Grid API wrappers on Dashboard Form Button'
+      );
+      console.log(
+        'Error in calling Count & Grid API wrappers from Dashboard Form Button',
+        e
+      );
+    }
   }
 
   return (

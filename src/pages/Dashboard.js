@@ -5,10 +5,9 @@ import DashboardHeader from '../components/ui/DashboardHeader';
 import { useUser } from '../context/UserContext';
 import FormCountWidget from '../components/dashboard/FormCountWidget';
 import DashboardPeriodDropdown from '../components/dashboard/DashboardPeriodDropdown';
+import DashboardBranchDropdown from '../components/dashboard/DashboardBranchDropdown';
 import FormButtons from '../components/dashboard/FormButtons';
-import DashboardTable from '../components/dashboard/DashboardTable';
-import GetDateFromPeriod from '../components/formComponents/reusableComponents/GetDateFromPeriod';
-import PassFormNamesInAPI from '../components/formComponents/reusableComponents/PassFormNamesInAPI';
+/* import DashboardTable from '../components/dashboard/DashboardTable'; */
 
 function Dashboard() {
   const { user, useCounts, DBList } = useUser();
@@ -25,7 +24,7 @@ function Dashboard() {
                 <div className="periodDDDiv">
                   <DashboardPeriodDropdown classToBeApplied="field-width" />
                   {user.Role === 'HO' ? (
-                    <DashboardPeriodDropdown classToBeApplied="field-width" />
+                    <DashboardBranchDropdown classToBeApplied="field-width" />
                   ) : (
                     ''
                   )}
@@ -34,16 +33,8 @@ function Dashboard() {
                   <FormCountWidget />
                 </div>
               </div>
-              {/* <FormButtons
-                subdomain={user.BankShortName}
-                formName={formName}
-                userRole={user.Role}
-                userBranch={user.Branch}
-                userEmail={user.Email}
-                isDate={selectedPeriod}
-                formButtonClicked={handleFormNameButtonClick}
-              />
-              <DashboardTable /> */}
+              <FormButtons />
+              {/* <DashboardTable /> */}
             </div>
           </div>
         </div>
